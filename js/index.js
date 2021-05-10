@@ -14,7 +14,25 @@ tinymce.init({
     'removeformat | help',
     content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }'
   });
-
+const enviarProfeOak = async function(){
+  //siempre this me devuelve una referencia al elemento que llamó a la función
+  //En este caso es el boton
+  let nro = this.nro;
+  let res = await Swal.fire({
+    title: "Desea realmente continuar?",
+    text: "Esta intentando enviar el pokemon al profesor oak, esto no se puede revertir",
+    icon: "warning",
+    showCancelButton:true,
+    confirmButtonText: "Si! hazlo!"
+  });
+  if(res.isConfirmed){
+    pokemones.splice(nro,1);
+    cargarTabla();
+    Swal.fire("Pokemon descartado", "Pokemon enviado al profesor", "info");
+  }else {
+    Swal.fire("Cancelado","Operacion cancelada", "error");
+  }
+};
 const pokemones = [];//Definir un arreglo
 const cargarTabla = ()=>{
 
@@ -37,7 +55,7 @@ const cargarTabla = ()=>{
     //Definir lo que va en la tabla
     tdNro.innerText = i + 1;
     tdNombre.innerText = p.nombre;
-    //TODO: El tipo tiene que ser un icono
+    
     let tipo = document.createElement("i");
     if(p.tipo == "1"){
       //Tipo planta <i class="fas fa-leaf"></i>
@@ -61,7 +79,17 @@ const cargarTabla = ()=>{
     //Cuando quiero definir texto, innerText
     //Cuando quiero definir directamente el html, innerHTML
     tdDescripcion.innerHTML = p.descripcion;
-    //TODO: Que hago con las acciones!
+    
+    let boton = document.createElement("button");
+    boton.classList.add("btn","btn-danger");
+    boton.innerText = "Enviar al profesor oak";
+
+    boton.nro = i;
+    tdAcciones.appendChild(boton);
+    tdAcciones.classList.add("text-center");
+
+    boton.addEventListener("click",enviarProfeOak);
+
     //5. Agregar los td al tr
     tr.appendChild(tdNro);
     tr.appendChild(tdNombre);
